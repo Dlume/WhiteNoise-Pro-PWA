@@ -311,5 +311,10 @@ function initBreathing() {
     if (stopBtn) stopBtn.addEventListener('click', stopBreathing);
 }
 
-// Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', initApp);
+// Initialize on DOM ready (with fallback for late loading)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    // DOM already ready, call immediately
+    initApp();
+}
