@@ -1,31 +1,61 @@
 /**
- * WhiteNoise Pro - 音频管理器
- * 支持 iOS 后台播放 + 媒体会话 API
- * @version 2.0 - 重构版
+ * WhiteNoise Pro v3.2 - Audio Manager
+ * High-quality procedural audio playback
  */
 
 class PWAAudioManager {
     constructor() {
+        this.audioContext = null;
         this.audioElements = {};
         this.isPlaying = false;
         this.currentSounds = [];
         this.volumes = {};
+        this.externalSources = {
+            'rain': 'sounds/rain.wav',
+            'ocean': 'sounds/ocean.wav',
+            'thunder': 'sounds/thunder.wav',
+            'forest': 'sounds/forest.wav',
+            'cafe': 'sounds/cafe.wav',
+            'wind': 'sounds/wind.wav',
+            'fireplace': 'sounds/fireplace.wav'
+        };
         this.setupMediaSession();
     }
 
     /**
-     * 创建音频元素
-     * @param {string} soundName - 音效名称
-     * @param {string} url - 音频文件 URL
+     * Initialize Audio Context
+     */
+    initAudioContext() {
+        if (!this.audioContext) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+    }
+
+    /**
+     * Create Audio Element
      */
     createAudioElement(soundName, url) {
         const audio = document.createElement('audio');
-        audio.src = url;
         audio.loop = true;
         audio.preload = 'auto';
         audio.setAttribute('webkit-playsinline', '');
         audio.setAttribute('playsinline', '');
-        audio.crossOrigin = 'anonymous';
+        
+        // Use local WAV files
+        const sourceUrl = this.externalSources[soundName] || url;
+        audio.src = sourceUrl;
+        
+        audio.addEventListener('canplaythrough', () => {
+            console.log(`[OK] ${soundName} loaded`);
+        });
+        
+        audio.addEventListener('error', (e) => {
+            console.error(`[ERROR] ${soundName} load failed:`, e);
+        });
+        
         document.body.appendChild(audio);
         this.audioElements[soundName] = audio;
         this.volumes[soundName] = 0.5;
@@ -33,22 +63,24 @@ class PWAAudioManager {
     }
 
     /**
-     * 播放指定音效
-     * @param {string} soundName - 音效名称
-     * @param {number} volume - 音量 (0-1)
+     * Play Sound
      */
     playSound(soundName, volume = 0.5) {
+        this.initAudioContext();
+        
         const audio = this.audioElements[soundName];
         if (audio) {
             audio.volume = volume;
             this.volumes[soundName] = volume;
+            
             audio.play()
                 .then(() => {
-                    console.log(`[OK] ${soundName} 播放成功`);
+                    console.log(`[OK] ${soundName} playing`);
                 })
                 .catch((e) => {
-                    console.error(`[ERROR] ${soundName} 播放失败:`, e.message);
+                    console.error(`[ERROR] ${soundName} play failed:`, e.message);
                 });
+            
             if (!this.currentSounds.includes(soundName)) {
                 this.currentSounds.push(soundName);
             }
@@ -58,13 +90,13 @@ class PWAAudioManager {
     }
 
     /**
-     * 停止指定音效
-     * @param {string} soundName - 音效名称
+     * Stop Sound
      */
     stopSound(soundName) {
         const audio = this.audioElements[soundName];
         if (audio) {
             audio.pause();
+            audio.currentTime = 0;
             this.currentSounds = this.currentSounds.filter(name => name !== soundName);
             if (this.currentSounds.length === 0) {
                 this.isPlaying = false;
@@ -74,11 +106,12 @@ class PWAAudioManager {
     }
 
     /**
-     * 停止所有音效
+     * Stop All Sounds
      */
     stopAll() {
         Object.values(this.audioElements).forEach((audio) => {
             audio.pause();
+            audio.currentTime = 0;
         });
         this.currentSounds = [];
         this.isPlaying = false;
@@ -86,9 +119,7 @@ class PWAAudioManager {
     }
 
     /**
-     * 设置音量
-     * @param {string} soundName - 音效名称
-     * @param {number} volume - 音量 (0-1)
+     * Set Volume
      */
     setVolume(soundName, volume) {
         const audio = this.audioElements[soundName];
@@ -99,43 +130,36 @@ class PWAAudioManager {
     }
 
     /**
-     * 获取当前音量
-     * @param {string} soundName - 音效名称
-     * @returns {number} 音量值
+     * Get Volume
      */
     getVolume(soundName) {
         return this.volumes[soundName] || 0.5;
     }
 
     /**
-     * 更新媒体会话状态
+     * Update Media Session
      */
     updateMediaSession() {
         if ('mediaSession' in navigator) {
-            if (this.isPlaying) {
-                navigator.mediaSession.playbackState = 'playing';
-            } else {
-                navigator.mediaSession.playbackState = 'paused';
-            }
+            navigator.mediaSession.playbackState = this.isPlaying ? 'playing' : 'paused';
         }
     }
 
     /**
-     * 设置媒体会话 (iOS 后台播放关键)
+     * Setup Media Session
      */
     setupMediaSession() {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: 'WhiteNoise Pro',
-                artist: '白噪音',
-                album: '自然声音合集',
+                artist: 'White Noise',
+                album: 'Nature Sounds Collection',
                 artwork: [
                     { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
                     { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' }
                 ]
             });
 
-            // 播放控制
             navigator.mediaSession.setActionHandler('play', () => {
                 this.currentSounds.forEach((sound) => {
                     this.playSound(sound, this.volumes[sound]);
@@ -145,28 +169,24 @@ class PWAAudioManager {
             navigator.mediaSession.setActionHandler('pause', () => {
                 this.stopAll();
             });
-
-            navigator.mediaSession.setActionHandler('previoustrack', null);
-            navigator.mediaSession.setActionHandler('nexttrack', null);
         }
     }
 
     /**
-     * 初始化所有音效
-     * @param {Array<string>} soundNames - 音效名称列表
+     * Initialize All Sounds
      */
     initializeSounds(soundNames) {
         soundNames.forEach((name) => {
-            this.createAudioElement(name, `sounds/${name}.mp3`);
+            this.createAudioElement(name, `sounds/${name}.wav`);
         });
-        console.log('[OK] 音效初始化完成:', soundNames.length, '个音效');
+        console.log('[OK] Sounds initialized:', soundNames.length);
     }
 }
 
-// 全局实例
+// Global instance
 const audioManager = new PWAAudioManager();
 
-// 导出供其他模块使用
+// Export
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = PWAAudioManager;
 }
