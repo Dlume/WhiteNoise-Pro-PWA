@@ -1,6 +1,6 @@
 /**
- * WhiteNoise Pro v3.4 - Main Entry Point
- * Clean UI + Sound Management (No Emoji)
+ * WhiteNoise Pro v3.8 - Main Entry Point
+ * Final Fix - Clean UI + Sound Management
  */
 
 // Sound Configuration
@@ -24,7 +24,9 @@ let breathingExercise = null;
  * Initialize Application
  */
 function initApp() {
-    console.log('[INFO] WhiteNoise Pro v3.4 Starting...');
+    console.log('[INFO] WhiteNoise Pro v3.8 Starting...');
+    console.log('[DEBUG] PWAAudioManager exists:', typeof PWAAudioManager);
+    console.log('[DEBUG] sounds-grid exists:', !!document.getElementById('sounds-grid'));
     
     // Initialize Audio Manager
     audioManager = new PWAAudioManager();
@@ -46,6 +48,7 @@ function initApp() {
     initTabs();
     
     console.log('[OK] Application Initialized');
+    console.log('[DEBUG] Sound cards rendered:', document.getElementById('sounds-grid').childElementCount);
 }
 
 /**
@@ -53,6 +56,7 @@ function initApp() {
  */
 function renderSoundCards() {
     const grid = document.getElementById('sounds-grid');
+    console.log('[DEBUG] renderSoundCards called, grid:', !!grid);
     if (!grid) return;
     
     grid.innerHTML = SOUND_LIST.map(sound => `
@@ -90,13 +94,11 @@ function toggleSound(card) {
     const status = card.querySelector('.sound-status');
     
     if (card.classList.contains('active')) {
-        // Stop playback
         audioManager.stopSound(soundId);
         card.classList.remove('active', 'active-playing');
         status.textContent = 'Click to play';
         selectedSounds = selectedSounds.filter(s => s !== soundId);
     } else {
-        // Start playback
         const volume = card.querySelector('.volume-slider').value / 100;
         audioManager.playSound(soundId, volume);
         card.classList.add('active', 'active-playing');
@@ -120,7 +122,6 @@ function updateVolume(e) {
  * Bind Events
  */
 function bindEvents() {
-    // Play All
     const playAllBtn = document.getElementById('play-all');
     if (playAllBtn) {
         playAllBtn.addEventListener('click', () => {
@@ -132,7 +133,6 @@ function bindEvents() {
         });
     }
     
-    // Stop All
     const stopAllBtn = document.getElementById('stop-all');
     if (stopAllBtn) {
         stopAllBtn.addEventListener('click', () => {
@@ -156,11 +156,9 @@ function initTabs() {
         btn.addEventListener('click', () => {
             const tabId = btn.dataset.tab;
             
-            // Update buttons
             tabButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            // Update contents
             tabContents.forEach(content => {
                 if (content.id === `${tabId}-tab`) {
                     content.classList.add('active');
@@ -179,21 +177,10 @@ function initTabs() {
  */
 function initFocusMode() {
     let timeLeft = 25 * 60;
-    let isRunning = false;
-    let isWorkTime = true;
-    
     const timerDisplay = document.getElementById('focus-time');
-    const focusModeEl = document.getElementById('focus-mode');
-    
-    function updateDisplay() {
-        if (timerDisplay) {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
+    if (timerDisplay) {
+        timerDisplay.textContent = '25:00';
     }
-    
-    updateDisplay();
 }
 
 /**
@@ -206,10 +193,14 @@ function initBreathing() {
     }
 }
 
-// Initialize immediately (DOM should be ready)
-console.log('[DEBUG] main.js loaded, calling initApp...');
+// Execute immediately
+console.log('[DEBUG] main.js v3.8 loaded');
 if (typeof PWAAudioManager !== 'undefined') {
-    initApp();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
 } else {
-    console.error('[ERROR] PWAAudioManager not found!');
+    console.error('[ERROR] PWAAudioManager not defined!');
 }
