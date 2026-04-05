@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    
+    <!-- iOS PWA 关键配置 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WhiteNoise Pro">
+    
+    <title>WhiteNoise Pro - 白噪音</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- PWA 图标 -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512x512.png">
+</head>
+<body>
+    <div class="container">
+        <!-- 标签页导航 -->
+        <div class="tab-nav">
+            <button class="tab-button active" data-tab="sounds">声音</button>
+            <button class="tab-button" data-tab="focus">专注</button>
+            <button class="tab-button" data-tab="breathing">呼吸</button>
+        </div>
+
+        <!-- 白噪音内容 -->
+        <div class="tab-content active" id="sounds-tab">
+            <h1 style="color: white; text-align: center; margin-bottom: 20px;">白噪音</h1>
+            
+            <!-- 播放控制 -->
+            <div class="playback-controls">
+                <button class="control-btn play-btn" id="play-btn">▶</button>
+                <button class="control-btn stop-btn" id="stop-btn">■</button>
+            </div>
+            
+            <!-- 音效选择 -->
+            <div class="sound-grid" id="sound-grid">
+                <!-- 音效卡片将通过 JavaScript 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 专注模式内容 -->
+        <div class="tab-content" id="focus-tab">
+            <h1 style="color: white; text-align: center; margin-bottom: 20px;">专注模式</h1>
+            
+            <div class="focus-display">
+                <div class="focus-time" id="focus-time">25:00</div>
+                <div class="focus-mode work-mode" id="focus-mode">工作时间</div>
+            </div>
+            
+            <div class="duration-selector">
+                <div class="duration-options">
+                    <button class="duration-btn active" data-duration="25">25 分钟</button>
+                    <button class="duration-btn" data-duration="30">30 分钟</button>
+                    <button class="duration-btn" data-duration="45">45 分钟</button>
+                    <button class="duration-btn" data-duration="60">60 分钟</button>
+                </div>
+            </div>
+            
+            <div class="focus-controls">
+                <button class="control-btn play-btn" id="focus-play">▶</button>
+                <button class="control-btn pause-btn" id="focus-pause">⏸</button>
+                <button class="control-btn stop-btn" id="focus-stop">■</button>
+            </div>
+            
+            <div style="text-align: center; color: white; margin-top: 20px;">
+                今日完成 <span id="sessions-completed">0</span> 个番茄钟
+            </div>
+        </div>
+
+        <!-- 呼吸练习内容 -->
+        <div class="tab-content" id="breathing-tab">
+            <h1 style="color: white; text-align: center; margin-bottom: 20px;">呼吸练习</h1>
+            
+            <div class="breathing-circle" id="breathing-circle"></div>
+            
+            <div class="breathing-phase" id="breathing-phase">吸气</div>
+            
+            <div class="breathing-controls" style="text-align: center; margin: 20px 0;">
+                <button class="control-btn play-btn" id="breathing-start">开始</button>
+                <button class="control-btn stop-btn" id="breathing-stop">停止</button>
+            </div>
+            
+            <div class="breathing-instructions">
+                4-7-8 呼吸法：吸气 4 秒，屏息 7 秒，呼气 8 秒
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="timer.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
