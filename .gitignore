@@ -1,0 +1,18 @@
+# Git 忽略文件
+*.b64
+*.base64
+*.backup
+*.upload.*
+*.b64.upload.*
+*_upload.json
+file_list.txt
+check_*.py
+self_check_*.py
+*.png
+github_page.png
+tiiny_host.png
+prepare_deploy.py
+DEPLOY_GUIDE.md
+completion_report.md
+WhiteNoise-Pro-PWA.zip
+WhiteNoise-Deploy/
