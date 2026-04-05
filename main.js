@@ -1,11 +1,11 @@
 /**
- * WhiteNoise Pro v3.2 - Main Entry Point
- * Clean UI + Sound Management
+ * WhiteNoise Pro v3.4 - Main Entry Point
+ * Clean UI + Sound Management (No Emoji)
  */
 
 // Sound Configuration
 const SOUND_LIST = [
-    { id: 'rain', name: 'Rain', icon: '🌧️' },
+    { id: 'rain', name: 'Rain', icon: '🌧' },
     { id: 'ocean', name: 'Ocean', icon: '🌊' },
     { id: 'forest', name: 'Forest', icon: '🌲' },
     { id: 'cafe', name: 'Cafe', icon: '☕' },
@@ -24,7 +24,7 @@ let breathingExercise = null;
  * Initialize Application
  */
 function initApp() {
-    console.log('[INFO] WhiteNoise Pro v3.2 Starting...');
+    console.log('[INFO] WhiteNoise Pro v3.4 Starting...');
     
     // Initialize Audio Manager
     audioManager = new PWAAudioManager();
@@ -149,7 +149,7 @@ function bindEvents() {
  * Initialize Tabs
  */
 function initTabs() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
     
     tabButtons.forEach(btn => {
@@ -178,13 +178,12 @@ function initTabs() {
  * Initialize Focus Mode
  */
 function initFocusMode() {
-    let timeLeft = 25 * 60; // 25 minutes
+    let timeLeft = 25 * 60;
     let isRunning = false;
     let isWorkTime = true;
     
-    const timerDisplay = document.getElementById('timer-display');
-    const startBtn = document.getElementById('timer-start');
-    const resetBtn = document.getElementById('timer-reset');
+    const timerDisplay = document.getElementById('focus-time');
+    const focusModeEl = document.getElementById('focus-mode');
     
     function updateDisplay() {
         if (timerDisplay) {
@@ -194,127 +193,23 @@ function initFocusMode() {
         }
     }
     
-    function toggleTimer() {
-        if (isRunning) {
-            // Pause
-            if (focusTimer) clearInterval(focusTimer);
-            if (startBtn) startBtn.textContent = 'Start';
-            isRunning = false;
-        } else {
-            // Start
-            focusTimer = setInterval(() => {
-                timeLeft--;
-                updateDisplay();
-                
-                if (timeLeft <= 0) {
-                    clearInterval(focusTimer);
-                    isRunning = false;
-                    if (startBtn) startBtn.textContent = 'Start';
-                    
-                    // Switch mode
-                    isWorkTime = !isWorkTime;
-                    timeLeft = isWorkTime ? 25 * 60 : 5 * 60;
-                    alert(isWorkTime ? 'Work time! Focus for 25 minutes.' : 'Break time! Rest for 5 minutes.');
-                    updateDisplay();
-                }
-            }, 1000);
-            
-            if (startBtn) startBtn.textContent = 'Pause';
-            isRunning = true;
-        }
-    }
-    
-    function resetTimer() {
-        if (focusTimer) clearInterval(focusTimer);
-        isRunning = false;
-        isWorkTime = true;
-        timeLeft = 25 * 60;
-        updateDisplay();
-        if (startBtn) startBtn.textContent = 'Start';
-    }
-    
-    if (startBtn) startBtn.addEventListener('click', toggleTimer);
-    if (resetBtn) resetBtn.addEventListener('click', resetTimer);
-    
     updateDisplay();
 }
 
 /**
- * Initialize Breathing Exercise
+ * Initialize Breathing
  */
 function initBreathing() {
-    let isRunning = false;
-    let breathingInterval = null;
-    
     const phaseElement = document.getElementById('breathing-phase');
-    const circleElement = document.querySelector('.breathing-circle');
-    const startBtn = document.getElementById('breathing-start');
-    const stopBtn = document.getElementById('breathing-stop');
-    
-    function breathingCycle() {
-        // Inhale (4 seconds)
-        if (phaseElement) phaseElement.textContent = 'Inhale';
-        if (circleElement) {
-            circleElement.classList.remove('hold', 'exhale');
-            circleElement.classList.add('inhale');
-        }
-        
-        // Hold (7 seconds)
-        setTimeout(() => {
-            if (!isRunning) return;
-            if (phaseElement) phaseElement.textContent = 'Hold';
-            if (circleElement) {
-                circleElement.classList.remove('inhale', 'exhale');
-                circleElement.classList.add('hold');
-            }
-        }, 4000);
-        
-        // Exhale (8 seconds)
-        setTimeout(() => {
-            if (!isRunning) return;
-            if (phaseElement) phaseElement.textContent = 'Exhale';
-            if (circleElement) {
-                circleElement.classList.remove('inhale', 'hold');
-                circleElement.classList.add('exhale');
-            }
-        }, 11000);
+    if (phaseElement) {
+        phaseElement.textContent = 'Ready';
     }
-    
-    function startBreathing() {
-        if (isRunning) return;
-        isRunning = true;
-        
-        breathingCycle();
-        breathingInterval = setInterval(breathingCycle, 19000);
-        
-        if (startBtn) {
-            startBtn.textContent = 'Running';
-            startBtn.disabled = true;
-        }
-    }
-    
-    function stopBreathing() {
-        isRunning = false;
-        if (breathingInterval) clearInterval(breathingInterval);
-        
-        if (phaseElement) phaseElement.textContent = 'Ready';
-        if (circleElement) {
-            circleElement.classList.remove('inhale', 'hold', 'exhale');
-        }
-        if (startBtn) {
-            startBtn.textContent = 'Start';
-            startBtn.disabled = false;
-        }
-    }
-    
-    if (startBtn) startBtn.addEventListener('click', startBreathing);
-    if (stopBtn) stopBtn.addEventListener('click', stopBreathing);
 }
 
-// Initialize on DOM ready (with fallback for late loading)
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
-} else {
-    // DOM already ready, call immediately
+// Initialize immediately (DOM should be ready)
+console.log('[DEBUG] main.js loaded, calling initApp...');
+if (typeof PWAAudioManager !== 'undefined') {
     initApp();
+} else {
+    console.error('[ERROR] PWAAudioManager not found!');
 }
