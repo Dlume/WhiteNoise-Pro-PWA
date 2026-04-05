@@ -1,55 +1,55 @@
 /**
- * WhiteNoise Pro v3.0 - 主程序入口
- * 优化界面交互 + 音效管理
+ * WhiteNoise Pro v3.2 - Main Entry Point
+ * Clean UI + Sound Management
  */
 
-// 音效配置
+// Sound Configuration
 const SOUND_LIST = [
-    { id: 'rain', name: '雨声', icon: '🌧️' },
-    { id: 'ocean', name: '海浪', icon: '🌊' },
-    { id: 'forest', name: '森林', icon: '🌲' },
-    { id: 'cafe', name: '咖啡厅', icon: '☕' },
-    { id: 'thunder', name: '雷声', icon: '⚡' },
-    { id: 'wind', name: '风声', icon: '💨' },
-    { id: 'fireplace', name: '篝火', icon: '🔥' }
+    { id: 'rain', name: 'Rain', icon: '🌧️' },
+    { id: 'ocean', name: 'Ocean', icon: '🌊' },
+    { id: 'forest', name: 'Forest', icon: '🌲' },
+    { id: 'cafe', name: 'Cafe', icon: '☕' },
+    { id: 'thunder', name: 'Thunder', icon: '⚡' },
+    { id: 'wind', name: 'Wind', icon: '💨' },
+    { id: 'fireplace', name: 'Fireplace', icon: '🔥' }
 ];
 
-// 全局状态
+// Global State
 let selectedSounds = [];
 let audioManager = null;
 let focusTimer = null;
 let breathingExercise = null;
 
 /**
- * 初始化应用
+ * Initialize Application
  */
 function initApp() {
-    console.log('[INFO] WhiteNoise Pro v3.0 启动中...');
+    console.log('[INFO] WhiteNoise Pro v3.2 Starting...');
     
-    // 初始化音频管理器
+    // Initialize Audio Manager
     audioManager = new PWAAudioManager();
     audioManager.initializeSounds(SOUND_LIST.map(s => s.id));
     
-    // 渲染音效卡片
+    // Render Sound Cards
     renderSoundCards();
     
-    // 绑定事件
+    // Bind Events
     bindEvents();
     
-    // 初始化专注模式
+    // Initialize Focus Mode
     initFocusMode();
     
-    // 初始化呼吸练习
+    // Initialize Breathing
     initBreathing();
     
-    // 初始化标签页
+    // Initialize Tabs
     initTabs();
     
-    console.log('[OK] 应用初始化完成');
+    console.log('[OK] Application Initialized');
 }
 
 /**
- * 渲染音效卡片
+ * Render Sound Cards
  */
 function renderSoundCards() {
     const grid = document.getElementById('sounds-grid');
@@ -60,7 +60,7 @@ function renderSoundCards() {
             <div class="sound-card-content">
                 <span class="sound-icon">${sound.icon}</span>
                 <h3 class="sound-name">${sound.name}</h3>
-                <p class="sound-status">点击播放</p>
+                <p class="sound-status">Click to play</p>
                 <div class="volume-control">
                     <input type="range" class="volume-slider" 
                            min="0" max="100" value="50"
@@ -71,36 +71,36 @@ function renderSoundCards() {
         </div>
     `).join('');
     
-    // 绑定卡片点击事件
+    // Bind card click events
     grid.querySelectorAll('.sound-card').forEach(card => {
         card.addEventListener('click', () => toggleSound(card));
     });
     
-    // 绑定音量滑块事件
+    // Bind volume slider events
     grid.querySelectorAll('.volume-slider').forEach(slider => {
         slider.addEventListener('input', (e) => updateVolume(e));
     });
 }
 
 /**
- * 切换音效播放
+ * Toggle Sound Playback
  */
 function toggleSound(card) {
     const soundId = card.dataset.sound;
     const status = card.querySelector('.sound-status');
     
     if (card.classList.contains('active')) {
-        // 停止播放
+        // Stop playback
         audioManager.stopSound(soundId);
         card.classList.remove('active', 'active-playing');
-        status.textContent = '点击播放';
+        status.textContent = 'Click to play';
         selectedSounds = selectedSounds.filter(s => s !== soundId);
     } else {
-        // 开始播放
+        // Start playback
         const volume = card.querySelector('.volume-slider').value / 100;
         audioManager.playSound(soundId, volume);
         card.classList.add('active', 'active-playing');
-        status.textContent = '播放中...';
+        status.textContent = 'Playing';
         if (!selectedSounds.includes(soundId)) {
             selectedSounds.push(soundId);
         }
@@ -108,7 +108,7 @@ function toggleSound(card) {
 }
 
 /**
- * 更新音量
+ * Update Volume
  */
 function updateVolume(e) {
     const soundId = e.target.dataset.sound;
@@ -117,122 +117,199 @@ function updateVolume(e) {
 }
 
 /**
- * 绑定全局事件
+ * Bind Events
  */
 function bindEvents() {
-    // 全部播放
-    document.getElementById('play-all')?.addEventListener('click', () => {
-        document.querySelectorAll('.sound-card').forEach(card => {
-            if (!card.classList.contains('active')) {
-                toggleSound(card);
-            }
+    // Play All
+    const playAllBtn = document.getElementById('play-all');
+    if (playAllBtn) {
+        playAllBtn.addEventListener('click', () => {
+            document.querySelectorAll('.sound-card').forEach(card => {
+                if (!card.classList.contains('active')) {
+                    toggleSound(card);
+                }
+            });
         });
-    });
+    }
     
-    // 停止全部
-    document.getElementById('stop-all')?.addEventListener('click', () => {
-        document.querySelectorAll('.sound-card').forEach(card => {
-            if (card.classList.contains('active')) {
-                toggleSound(card);
-            }
+    // Stop All
+    const stopAllBtn = document.getElementById('stop-all');
+    if (stopAllBtn) {
+        stopAllBtn.addEventListener('click', () => {
+            document.querySelectorAll('.sound-card').forEach(card => {
+                if (card.classList.contains('active')) {
+                    toggleSound(card);
+                }
+            });
         });
-    });
+    }
 }
 
 /**
- * 初始化标签页
+ * Initialize Tabs
  */
 function initTabs() {
-    document.querySelectorAll('.tab-btn').forEach(btn => {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            // 移除所有激活状态
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            const tabId = btn.dataset.tab;
             
-            // 激活当前标签
+            // Update buttons
+            tabButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const tabId = btn.dataset.tab + '-tab';
-            document.getElementById(tabId).style.display = 'block';
+            
+            // Update contents
+            tabContents.forEach(content => {
+                if (content.id === `${tabId}-tab`) {
+                    content.classList.add('active');
+                    content.style.display = 'block';
+                } else {
+                    content.classList.remove('active');
+                    content.style.display = 'none';
+                }
+            });
         });
     });
 }
 
 /**
- * 初始化专注模式
+ * Initialize Focus Mode
  */
 function initFocusMode() {
-    focusTimer = new FocusTimer();
+    let timeLeft = 25 * 60; // 25 minutes
+    let isRunning = false;
+    let isWorkTime = true;
     
+    const timerDisplay = document.getElementById('timer-display');
     const startBtn = document.getElementById('timer-start');
     const resetBtn = document.getElementById('timer-reset');
-    const display = document.getElementById('timer-display');
     
-    if (!startBtn || !resetBtn || !display) return;
-    
-    startBtn.addEventListener('click', () => {
-        if (focusTimer.isRunning) {
-            focusTimer.pause();
-            startBtn.textContent = '继续';
-        } else {
-            focusTimer.start();
-            startBtn.textContent = '暂停';
+    function updateDisplay() {
+        if (timerDisplay) {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
-    });
+    }
     
-    resetBtn.addEventListener('click', () => {
-        focusTimer.reset();
-        startBtn.textContent = '开始';
-        display.textContent = '25:00';
-    });
+    function toggleTimer() {
+        if (isRunning) {
+            // Pause
+            if (focusTimer) clearInterval(focusTimer);
+            if (startBtn) startBtn.textContent = 'Start';
+            isRunning = false;
+        } else {
+            // Start
+            focusTimer = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(focusTimer);
+                    isRunning = false;
+                    if (startBtn) startBtn.textContent = 'Start';
+                    
+                    // Switch mode
+                    isWorkTime = !isWorkTime;
+                    timeLeft = isWorkTime ? 25 * 60 : 5 * 60;
+                    alert(isWorkTime ? 'Work time! Focus for 25 minutes.' : 'Break time! Rest for 5 minutes.');
+                    updateDisplay();
+                }
+            }, 1000);
+            
+            if (startBtn) startBtn.textContent = 'Pause';
+            isRunning = true;
+        }
+    }
     
-    // 更新时间显示
-    focusTimer.onUpdate = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
+    function resetTimer() {
+        if (focusTimer) clearInterval(focusTimer);
+        isRunning = false;
+        isWorkTime = true;
+        timeLeft = 25 * 60;
+        updateDisplay();
+        if (startBtn) startBtn.textContent = 'Start';
+    }
+    
+    if (startBtn) startBtn.addEventListener('click', toggleTimer);
+    if (resetBtn) resetBtn.addEventListener('click', resetTimer);
+    
+    updateDisplay();
 }
 
 /**
- * 初始化呼吸练习
+ * Initialize Breathing Exercise
  */
 function initBreathing() {
-    breathingExercise = new BreathingExercise();
+    let isRunning = false;
+    let breathingInterval = null;
     
+    const phaseElement = document.getElementById('breathing-phase');
+    const circleElement = document.querySelector('.breathing-circle');
     const startBtn = document.getElementById('breathing-start');
     const stopBtn = document.getElementById('breathing-stop');
-    const phaseText = document.getElementById('breathing-phase');
-    const instruction = document.getElementById('breathing-instruction');
     
-    if (!startBtn || !stopBtn || !phaseText) return;
-    
-    startBtn.addEventListener('click', () => {
-        if (breathingExercise.isRunning) return;
+    function breathingCycle() {
+        // Inhale (4 seconds)
+        if (phaseElement) phaseElement.textContent = 'Inhale';
+        if (circleElement) {
+            circleElement.classList.remove('hold', 'exhale');
+            circleElement.classList.add('inhale');
+        }
         
-        breathingExercise.start();
-        startBtn.textContent = '练习中...';
-        startBtn.disabled = true;
+        // Hold (7 seconds)
+        setTimeout(() => {
+            if (!isRunning) return;
+            if (phaseElement) phaseElement.textContent = 'Hold';
+            if (circleElement) {
+                circleElement.classList.remove('inhale', 'exhale');
+                circleElement.classList.add('hold');
+            }
+        }, 4000);
         
-        // 更新阶段显示
-        breathingExercise.onPhaseChange = (phase) => {
-            const phases = {
-                'inhale': { text: '吸气', instruction: '深深吸气 4 秒' },
-                'hold': { text: '屏息', instruction: '保持呼吸 7 秒' },
-                'exhale': { text: '呼气', instruction: '缓慢呼气 8 秒' }
-            };
-            phaseText.textContent = phases[phase]?.text || phase;
-            instruction.textContent = phases[phase]?.instruction || '';
-        };
-    });
+        // Exhale (8 seconds)
+        setTimeout(() => {
+            if (!isRunning) return;
+            if (phaseElement) phaseElement.textContent = 'Exhale';
+            if (circleElement) {
+                circleElement.classList.remove('inhale', 'hold');
+                circleElement.classList.add('exhale');
+            }
+        }, 11000);
+    }
     
-    stopBtn.addEventListener('click', () => {
-        breathingExercise.stop();
-        startBtn.textContent = '开始练习';
-        startBtn.disabled = false;
-        phaseText.textContent = '准备';
-        instruction.textContent = '吸气 4 秒 · 屏息 7 秒 · 呼气 8 秒';
-    });
+    function startBreathing() {
+        if (isRunning) return;
+        isRunning = true;
+        
+        breathingCycle();
+        breathingInterval = setInterval(breathingCycle, 19000);
+        
+        if (startBtn) {
+            startBtn.textContent = 'Running';
+            startBtn.disabled = true;
+        }
+    }
+    
+    function stopBreathing() {
+        isRunning = false;
+        if (breathingInterval) clearInterval(breathingInterval);
+        
+        if (phaseElement) phaseElement.textContent = 'Ready';
+        if (circleElement) {
+            circleElement.classList.remove('inhale', 'hold', 'exhale');
+        }
+        if (startBtn) {
+            startBtn.textContent = 'Start';
+            startBtn.disabled = false;
+        }
+    }
+    
+    if (startBtn) startBtn.addEventListener('click', startBreathing);
+    if (stopBtn) stopBtn.addEventListener('click', stopBreathing);
 }
 
-// DOM 加载完成后初始化
+// Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initApp);
