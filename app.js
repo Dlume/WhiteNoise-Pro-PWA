@@ -11,13 +11,13 @@ class PWAAudioManager {
         this.currentSounds = [];
         this.volumes = {};
         this.externalSources = {
-            'rain': 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3',
-            'ocean': 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73b67.mp3',
-            'thunder': 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_2e3f8e1e5e.mp3',
-            'forest': 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3',
-            'cafe': 'https://cdn.pixabay.com/download/audio/2022/03/24/audio_c610232532.mp3',
-            'wind': 'https://cdn.pixabay.com/download/audio/2022/03/24/audio_d1718ab41b.mp3',
-            'fireplace': 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_43e9e8e7d0.mp3'
+            'rain': 'sounds/rain.wav',
+            'ocean': 'sounds/ocean.wav',
+            'thunder': 'sounds/thunder.wav',
+            'forest': 'sounds/forest.wav',
+            'cafe': 'sounds/cafe.wav',
+            'wind': 'sounds/wind.wav',
+            'fireplace': 'sounds/fireplace.wav'
         };
         this.setupMediaSession();
     }
@@ -39,13 +39,12 @@ class PWAAudioManager {
      */
     createAudioElement(soundName, url) {
         const audio = document.createElement('audio');
-        audio.crossOrigin = 'anonymous';
         audio.loop = true;
         audio.preload = 'auto';
         audio.setAttribute('webkit-playsinline', '');
         audio.setAttribute('playsinline', '');
         
-        // 使用外部音源或本地音源
+        // 使用本地 WAV 音源
         const sourceUrl = this.externalSources[soundName] || url;
         audio.src = sourceUrl;
         
