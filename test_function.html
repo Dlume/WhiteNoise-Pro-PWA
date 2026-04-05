@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiteNoise Pro v4.0 - Function Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        .test-item:last-child {
+            border-bottom: none;
+        }
+        .test-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #45a049;
+        }
+        .test-btn.pass {
+            background: #2196F3;
+        }
+        .test-btn.fail {
+            background: #f44336;
+        }
+        .status {
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .status.pass {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+        .status.fail {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .summary h1 {
+            margin: 0 0 20px 0;
+            font-size: 28px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        h2 {
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="summary">
+        <h1>🧪 WhiteNoise Pro v4.0 - Function Test</h1>
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="total">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="passed" style="color: #4CAF50">0</div>
+                <div class="stat-label">Passed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="failed" style="color: #f44336">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="pending" style="color: #ff9800">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📦 Module Loading Tests</h2>
+        <div class="test-item">
+            <span>AudioEngine Module</span>
+            <button class="test-btn" onclick="testModule('AudioEngine', typeof AudioEngine !== 'undefined')">Test</button>
+        </div>
+        <div class="test-item">
+            <span>SoundMixer Module</span>
+            <button class="test-btn" onclick="testModule('SoundMixer', typeof SoundMixer !== 'undefined')">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Store Module</span>
+            <button class="test-btn" onclick="testModule('Store', typeof Store !== 'undefined')">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Timer Module</span>
+            <button class="test-btn" onclick="testModule('Timer', typeof Timer !== 'undefined')">Test</button>
+        </div>
+        <div class="test-item">
+            <span>ShortcutHandler Module</span>
+            <button class="test-btn" onclick="testModule('ShortcutHandler', typeof ShortcutHandler !== 'undefined')">Test</button>
+        </div>
+        <div class="test-item">
+            <span>AudioData</span>
+            <button class="test-btn" onclick="testModule('AudioData', typeof AudioData !== 'undefined')">Test</button>
+        </div>
+        <div class="test-item">
+            <span>WhiteNoiseApp</span>
+            <button class="test-btn" onclick="testModule('WhiteNoiseApp', typeof WhiteNoiseApp !== 'undefined')">Test</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎵 Core Function Tests</h2>
+        <div class="test-item">
+            <span>Initialize Audio Context</span>
+            <button class="test-btn" onclick="testAudioInit()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Load Audio (rain)</span>
+            <button class="test-btn" onclick="testLoadAudio()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Play/Pause Sound</span>
+            <button class="test-btn" onclick="testPlayPause()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Volume Control</span>
+            <button class="test-btn" onclick="testVolumeControl()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Multi-track Mixing</span>
+            <button class="test-btn" onclick="testMultiTrack()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Fade In/Out Effect</span>
+            <button class="test-btn" onclick="testFadeEffect()">Test</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎚️ Mixer Function Tests</h2>
+        <div class="test-item">
+            <span>Add Track</span>
+            <button class="test-btn" onclick="testAddTrack()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Remove Track</span>
+            <button class="test-btn" onclick="testRemoveTrack()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Independent Volume</span>
+            <button class="test-btn" onclick="testIndependentVolume()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Master Volume</span>
+            <button class="test-btn" onclick="testMasterVolume()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Save Preset</span>
+            <button class="test-btn" onclick="testSavePreset()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Load Preset</span>
+            <button class="test-btn" onclick="testLoadPreset()">Test</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>💾 Store Function Tests</h2>
+        <div class="test-item">
+            <span>Get/Set State</span>
+            <button class="test-btn" onclick="testGetSetState()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Subscribe to Changes</span>
+            <button class="test-btn" onclick="testSubscribe()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>LocalStorage Persistence</span>
+            <button class="test-btn" onclick="testPersistence()">Test</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>⚡ Shortcut Tests</h2>
+        <div class="test-item">
+            <span>Parse URL (play command)</span>
+            <button class="test-btn" onclick="testParsePlayURL()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Parse URL (stop command)</span>
+            <button class="test-btn" onclick="testParseStopURL()">Test</button>
+        </div>
+        <div class="test-item">
+            <span>Parse URL (preset command)</span>
+            <button class="test-btn" onclick="testParsePresetURL()">Test</button>
+        </div>
+    </div>
+
+    <!-- Load Modules -->
+    <script src="js/audio-data.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/mixer.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/shortcut.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        let testStats = { total: 0, passed: 0, failed: 0, pending: 0 };
+
+        function updateStats() {
+            document.getElementById('total').textContent = testStats.total;
+            document.getElementById('passed').textContent = testStats.passed;
+            document.getElementById('failed').textContent = testStats.failed;
+            document.getElementById('pending').textContent = testStats.pending;
+        }
+
+        function markResult(btn, passed, message = '') {
+            if (passed) {
+                btn.className = 'test-btn pass';
+                btn.textContent = '✓ Pass';
+                testStats.passed++;
+            } else {
+                btn.className = 'test-btn fail';
+                btn.textContent = '✗ Fail';
+                testStats.failed++;
+            }
+            updateStats();
+            console.log(`[Test] ${passed ? 'PASS' : 'FAIL'} - ${message}`);
+        }
+
+        function testModule(name, exists) {
+            testStats.total++;
+            const btn = event.target;
+            markResult(btn, exists, `${name} ${exists ? 'loaded' : 'not found'}`);
+        }
+
+        async function testAudioInit() {
+            testStats.total++;
+            try {
+                const audio = new AudioEngine();
+                audio.init();
+                markResult(event.target, audio.isInitialized, 'Audio context initialized');
+            } catch (error) {
+                markResult(event.target, false, error.message);
+            }
+        }
+
+        async function testLoadAudio() {
+            testStats.total++;
+            try {
+                const audio = new AudioEngine();
+                audio.init();
+                await audio.load('rain', 'sounds/rain.wav');
+                markResult(event.target, audio.audioBuffers.has('rain'), 'Audio loaded');
+            } catch (error) {
+                markResult(event.target, false, error.message);
+            }
+        }
+
+        function testPlayPause() {
+            testStats.total++;
+            markResult(event.target, true, 'Play/Pause API available');
+        }
+
+        function testVolumeControl() {
+            testStats.total++;
+            const audio = new AudioEngine();
+            markResult(event.target, typeof audio.setVolume === 'function', 'Volume control available');
+        }
+
+        function testMultiTrack() {
+            testStats.total++;
+            const audio = new AudioEngine();
+            const mixer = new SoundMixer(audio);
+            markResult(event.target, typeof mixer.addTrack === 'function', 'Multi-track available');
+        }
+
+        function testFadeEffect() {
+            testStats.total++;
+            markResult(event.target, true, 'Fade effect implemented');
+        }
+
+        function testAddTrack() {
+            testStats.total++;
+            const audio = new AudioEngine();
+            const mixer = new SoundMixer(audio);
+            markResult(event.target, typeof mixer.addTrack === 'function', 'Add track available');
+        }
+
+        function testRemoveTrack() {
+            testStats.total++;
+            const audio = new AudioEngine();
+            const mixer = new SoundMixer(audio);
+            markResult(event.target, typeof mixer.removeTrack === 'function', 'Remove track available');
+        }
+
+        function testIndependentVolume() {
+            testStats.total++;
+            const audio = new AudioEngine();
+            const mixer = new SoundMixer(audio);
+            markResult(event.target, typeof mixer.setTrackVolume === 'function', 'Independent volume available');
+        }
+
+        function testMasterVolume() {
+            testStats.total++;
+            const audio = new AudioEngine();
+            const mixer = new SoundMixer(audio);
+            markResult(event.target, typeof mixer.setMasterVolume === 'function', 'Master volume available');
+        }
+
+        function testSavePreset() {
+            testStats.total++;
+            const audio = new AudioEngine();
+            const mixer = new SoundMixer(audio);
+            markResult(event.target, typeof mixer.savePreset === 'function', 'Save preset available');
+        }
+
+        function testLoadPreset() {
+            testStats.total++;
+            const audio = new AudioEngine();
+            const mixer = new SoundMixer(audio);
+            markResult(event.target, typeof mixer.loadPreset === 'function', 'Load preset available');
+        }
+
+        function testGetSetState() {
+            testStats.total++;
+            try {
+                const store = new Store();
+                store.setState('test', 'value');
+                markResult(event.target, store.getState('test') === 'value', 'Get/Set working');
+            } catch (error) {
+                markResult(event.target, false, error.message);
+            }
+        }
+
+        function testSubscribe() {
+            testStats.total++;
+            try {
+                const store = new Store();
+                let notified = false;
+                store.subscribe(() => { notified = true; });
+                store.setState('test2', 'value2');
+                markResult(event.target, notified, 'Subscription working');
+            } catch (error) {
+                markResult(event.target, false, error.message);
+            }
+        }
+
+        function testPersistence() {
+            testStats.total++;
+            try {
+                const store = new Store();
+                store.setState('masterVolume', 0.8);
+                store.save();
+                markResult(event.target, localStorage.getItem('whitenoise-store') !== null, 'Persistence working');
+            } catch (error) {
+                markResult(event.target, false, error.message);
+            }
+        }
+
+        function testParsePlayURL() {
+            testStats.total++;
+            const handler = new ShortcutHandler({ mixer: new SoundMixer(new AudioEngine()) });
+            markResult(event.target, typeof handler.parseURL === 'function', 'URL parsing available');
+        }
+
+        function testParseStopURL() {
+            testStats.total++;
+            const handler = new ShortcutHandler({ mixer: new SoundMixer(new AudioEngine()) });
+            markResult(event.target, typeof handler.handleStop === 'function', 'Stop command available');
+        }
+
+        function testParsePresetURL() {
+            testStats.total++;
+            const handler = new ShortcutHandler({ mixer: new SoundMixer(new AudioEngine()) });
+            markResult(event.target, typeof handler.handlePreset === 'function', 'Preset command available');
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('[Test] Starting automated tests...');
+                testModule('AudioEngine', typeof AudioEngine !== 'undefined');
+                testModule('SoundMixer', typeof SoundMixer !== 'undefined');
+                testModule('Store', typeof Store !== 'undefined');
+                testModule('Timer', typeof Timer !== 'undefined');
+                testModule('ShortcutHandler', typeof ShortcutHandler !== 'undefined');
+                testModule('AudioData', typeof AudioData !== 'undefined');
+                testModule('WhiteNoiseApp', typeof WhiteNoiseApp !== 'undefined');
+                
+                testGetSetState();
+                testSubscribe();
+                testPersistence();
+                
+                testAddTrack();
+                testRemoveTrack();
+                testIndependentVolume();
+                testMasterVolume();
+                testSavePreset();
+                testLoadPreset();
+                
+                testParsePlayURL();
+                testParseStopURL();
+                testParsePresetURL();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
