@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f0f0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>WhiteNoise Pro v4.0</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="app-title">WhiteNoise Pro</h1>
+                <span class="version-badge">v4.0</span>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn theme-toggle" onclick="app.toggleTheme()" title="Toggle Theme">
+                    🌓
+                </button>
+                <button class="icon-btn settings-btn" onclick="app.toggleSettings()" title="Settings">
+                    ⚙️
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Now Playing Section -->
+            <section class="now-playing">
+                <h2 class="section-title">Now Playing</h2>
+                <div class="player-card">
+                    <div class="player-info">
+                        <div class="player-sounds" id="playerSounds">
+                            <span class="no-sounds">No sounds playing</span>
+                        </div>
+                        <div class="player-controls">
+                            <button class="control-btn" onclick="app.masterPlayPause()" id="masterPlayBtn">
+                                ▶️
+                            </button>
+                            <button class="control-btn" onclick="app.masterStop()">
+                                ⏹️
+                            </button>
+                        </div>
+                    </div>
+                    <div class="master-volume">
+                        <label>Master Volume</label>
+                        <input 
+                            type="range" 
+                            min="0" 
+                            max="100" 
+                            value="100"
+                            oninput="app.setMasterVolume(this.value / 100)"
+                            class="volume-slider"
+                        >
+                        <span class="volume-value" id="masterVolumeValue">100%</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Presets -->
+            <section class="quick-presets">
+                <h2 class="section-title">Quick Presets</h2>
+                <div class="preset-grid" id="presetGrid">
+                    <!-- Presets will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Sound Library -->
+            <section class="sound-library">
+                <h2 class="section-title">Sound Library</h2>
+                <div class="category-tabs" id="categoryTabs">
+                    <button class="tab active" data-category="all">All</button>
+                    <button class="tab" data-category="weather">Weather</button>
+                    <button class="tab" data-category="nature">Nature</button>
+                    <button class="tab" data-category="water">Water</button>
+                    <button class="tab" data-category="ambient">Ambient</button>
+                </div>
+                
+                <div class="sounds-grid" id="soundsGrid">
+                    <!-- Sounds will be loaded dynamically -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="home">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item" data-view="mixer">
+                <span class="nav-icon">🎚️</span>
+                <span class="nav-label">Mixer</span>
+            </button>
+            <button class="nav-item" data-view="presets">
+                <span class="nav-icon">⭐</span>
+                <span class="nav-label">Presets</span>
+            </button>
+            <button class="nav-item" data-view="timer">
+                <span class="nav-icon">⏱️</span>
+                <span class="nav-label">Timer</span>
+            </button>
+        </nav>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-header">
+                <h3>Settings</h3>
+                <button class="close-btn" onclick="app.toggleSettings()">✕</button>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>Fade In/Out</label>
+                    <input type="checkbox" checked id="fadeInOutToggle">
+                </div>
+                <div class="setting-item">
+                    <label>Auto-save Presets</label>
+                    <input type="checkbox" checked id="autoSaveToggle">
+                </div>
+                <div class="setting-item">
+                    <label>Notifications</label>
+                    <input type="checkbox" checked id="notificationsToggle">
+                </div>
+                <div class="setting-item">
+                    <button class="btn-secondary" onclick="app.exportPresets()">Export Presets</button>
+                </div>
+                <div class="setting-item">
+                    <button class="btn-secondary" onclick="app.resetAll()">Reset All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/audio-data.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/mixer.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/shortcut.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
