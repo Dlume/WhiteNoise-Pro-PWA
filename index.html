@@ -4,21 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <!-- iOS PWA 关键配置 -->
+    <!-- iOS PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="WhiteNoise Pro">
     
-    <title>WhiteNoise Pro - 白噪音</title>
+    <title>WhiteNoise Pro - 白噪音专注</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- PWA 图标 -->
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512x512.png">
 </head>
 <body>
     <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🌊 WhiteNoise Pro</h1>
+            <p>沉浸式白噪音 · 专注工作 · 深度睡眠</p>
+        </div>
+
         <!-- 标签页导航 -->
         <div class="tab-nav">
             <button class="tab-button active" data-tab="sounds">声音</button>
@@ -28,8 +32,6 @@
 
         <!-- 白噪音内容 -->
         <div class="tab-content active" id="sounds-tab">
-            <h1 style="color: white; text-align: center; margin-bottom: 20px;">白噪音</h1>
-            
             <!-- 播放控制 -->
             <div class="playback-controls">
                 <button class="control-btn play-btn" id="play-btn">▶</button>
@@ -37,15 +39,11 @@
             </div>
             
             <!-- 音效选择 -->
-            <div class="sound-grid" id="sound-grid">
-                <!-- 音效卡片将通过 JavaScript 动态生成 -->
-            </div>
+            <div class="sound-grid" id="sound-grid"></div>
         </div>
 
-        <!-- 专注模式内容 -->
+        <!-- 专注模式 -->
         <div class="tab-content" id="focus-tab">
-            <h1 style="color: white; text-align: center; margin-bottom: 20px;">专注模式</h1>
-            
             <div class="focus-display">
                 <div class="focus-time" id="focus-time">25:00</div>
                 <div class="focus-mode work-mode" id="focus-mode">工作时间</div>
@@ -60,32 +58,29 @@
                 </div>
             </div>
             
-            <div class="focus-controls">
+            <div class="playback-controls">
                 <button class="control-btn play-btn" id="focus-play">▶</button>
-                <button class="control-btn pause-btn" id="focus-pause">⏸</button>
                 <button class="control-btn stop-btn" id="focus-stop">■</button>
             </div>
             
-            <div style="text-align: center; color: white; margin-top: 20px;">
+            <div style="text-align: center; color: var(--text-secondary); margin-top: 30px;">
                 今日完成 <span id="sessions-completed">0</span> 个番茄钟
             </div>
         </div>
 
-        <!-- 呼吸练习内容 -->
+        <!-- 呼吸练习 -->
         <div class="tab-content" id="breathing-tab">
-            <h1 style="color: white; text-align: center; margin-bottom: 20px;">呼吸练习</h1>
-            
             <div class="breathing-circle" id="breathing-circle"></div>
+            <div class="breathing-phase" id="breathing-phase">准备</div>
             
-            <div class="breathing-phase" id="breathing-phase">吸气</div>
-            
-            <div class="breathing-controls" style="text-align: center; margin: 20px 0;">
+            <div class="playback-controls">
                 <button class="control-btn play-btn" id="breathing-start">开始</button>
                 <button class="control-btn stop-btn" id="breathing-stop">停止</button>
             </div>
             
             <div class="breathing-instructions">
-                4-7-8 呼吸法：吸气 4 秒，屏息 7 秒，呼气 8 秒
+                4-7-8 呼吸法：吸气 4 秒，屏息 7 秒，呼气 8 秒<br>
+                帮助放松身心，改善睡眠质量
             </div>
         </div>
     </div>
