@@ -1,4 +1,22 @@
-/* WhiteNoise Pro - PWA 样式 */
+/* WhiteNoise Pro - PWA 样式 v2.0 */
+
+/* CSS 变量定义 */
+:root {
+    --primary-color: #8b5cf6;
+    --primary-dark: #7c3aed;
+    --primary-light: #a78bfa;
+    --background-dark: #0f172a;
+    --background-light: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-light: #ffffff;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,9 +25,10 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     min-height: 100vh;
-    color: #333;
+    color: var(--text-primary);
+    overflow-x: hidden;
 }
 
 .container {
@@ -21,11 +40,12 @@ body {
 /* 标签页导航 */
 .tab-nav {
     display: flex;
-    background: white;
+    background: var(--background-dark);
+    color: var(--text-light);
     border-radius: 20px;
     padding: 8px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: var(--card-shadow);
 }
 
 .tab-button {
@@ -36,28 +56,28 @@ body {
     border-radius: 16px;
     font-size: 16px;
     font-weight: 600;
-    color: #666;
+    color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 .tab-button.active {
-    background: #667eea;
-    color: white;
+    background: var(--primary-color);
+    color: var(--text-light);
 }
 
 .tab-button:hover:not(.active) {
-    background: #f0f0f0;
+    background: rgba(255, 255, 255, 0.1);
 }
 
-/* 内容区域 */
+/* 标签页内容 */
 .tab-content {
     display: none;
+    animation: fadeIn 0.3s ease;
 }
 
 .tab-content.active {
     display: block;
-    animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
@@ -65,50 +85,98 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 白噪音控制 */
+/* 音效卡片 */
 .sound-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
     margin-top: 20px;
 }
 
 .sound-card {
-    background: white;
+    background: var(--text-light);
     border-radius: 16px;
-    padding: 20px 10px;
+    padding: 20px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all var(--transition-speed) ease;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
 }
 
 .sound-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
-.sound-card.selected {
-    background: #e8eaf6;
-    border: 2px solid #667eea;
+.sound-card.playing,
+.sound-card.active-playing {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: var(--text-light);
+}
+
+.sound-card.playing::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes pulse {
+    0% { width: 0; height: 0; opacity: 1; }
+    100% { width: 200px; height: 200px; opacity: 0; }
 }
 
 .sound-icon {
-    font-size: 32px;
-    margin-bottom: 10px;
-    color: #667eea;
+    font-size: 48px;
+    margin-bottom: 8px;
 }
 
 .sound-name {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
 }
 
-/* 播放控制 */
-.playback-controls {
+/* 音量滑块 */
+.volume-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e2e8f0;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    background: var(--primary-dark);
+    transform: scale(1.2);
+}
+
+/* 播放控制按钮 */
+.playback-controls,
+.focus-controls,
+.breathing-controls {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 16px;
     margin: 30px 0;
 }
 
@@ -119,125 +187,176 @@ body {
     border: none;
     font-size: 24px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-speed) ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: var(--card-shadow);
 }
 
 .play-btn {
-    background: #4CAF50;
-    color: white;
+    background: var(--success-color);
+    color: var(--text-light);
 }
 
 .play-btn:hover {
-    background: #45a049;
+    background: #059669;
+    transform: scale(1.1);
 }
 
-.pause-btn {
-    background: #FF9800;
-    color: white;
-}
-
-.pause-btn:hover {
-    background: #f57c00;
+.play-btn.playing {
+    background: var(--warning-color);
 }
 
 .stop-btn {
-    background: #F44336;
-    color: white;
+    background: var(--danger-color);
+    color: var(--text-light);
 }
 
 .stop-btn:hover {
-    background: #d32f2f;
+    background: #dc2626;
+    transform: scale(1.1);
+}
+
+.pause-btn {
+    background: var(--warning-color);
+    color: var(--text-light);
+}
+
+.pause-btn:hover {
+    background: #d97706;
+    transform: scale(1.1);
 }
 
 /* 专注模式 */
 .focus-display {
     text-align: center;
-    margin: 40px 0;
+    padding: 40px 20px;
+    background: var(--text-light);
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 20px;
 }
 
 .focus-time {
-    font-size: 64px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
 }
 
 .focus-mode {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
     margin-top: 10px;
-    color: white;
+    padding: 8px 20px;
+    border-radius: 12px;
+    display: inline-block;
 }
 
-.work-mode { color: #4CAF50; }
-.break-mode { color: #FF9800; }
-
-.focus-controls {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin: 30px 0;
+.work-mode {
+    background: var(--success-color);
+    color: var(--text-light);
 }
 
+.break-mode {
+    background: var(--warning-color);
+    color: var(--text-light);
+}
+
+/* 时长选择器 */
 .duration-selector {
-    margin: 20px 0;
-    text-align: center;
+    background: var(--text-light);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--card-shadow);
 }
 
 .duration-options {
     display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
 }
 
 .duration-btn {
-    padding: 8px 16px;
-    border: 2px solid white;
-    background: transparent;
-    color: white;
-    border-radius: 20px;
-    font-size: 14px;
+    padding: 12px 24px;
+    border: 2px solid var(--primary-color);
+    background: var(--text-light);
+    color: var(--primary-color);
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 .duration-btn.active {
-    background: white;
-    color: #667eea;
+    background: var(--primary-color);
+    color: var(--text-light);
+}
+
+.duration-btn:hover:not(.active) {
+    background: rgba(139, 92, 246, 0.1);
 }
 
 /* 呼吸练习 */
 .breathing-circle {
     width: 200px;
     height: 200px;
-    border: 8px solid #4CAF50;
     border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     margin: 40px auto;
-    position: relative;
-    animation: breathing 4s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+    transition: all 0.3s ease;
 }
 
-@keyframes breathing {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2); }
+.breathing-circle.inhale {
+    animation: breatheIn 4s ease-in-out;
+}
+
+.breathing-circle.hold {
+    animation: breatheHold 7s ease-in-out;
+}
+
+.breathing-circle.exhale {
+    animation: breatheOut 8s ease-in-out;
+}
+
+@keyframes breatheIn {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.5); }
+}
+
+@keyframes breatheHold {
+    0%, 100% { transform: scale(1.5); }
+}
+
+@keyframes breatheOut {
+    0% { transform: scale(1.5); }
+    100% { transform: scale(1); }
 }
 
 .breathing-phase {
     text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    margin: 20px 0;
-    color: white;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 20px;
 }
 
 .breathing-instructions {
     text-align: center;
-    color: rgba(255,255,255,0.8);
-    margin-top: 20px;
+    color: var(--text-light);
+    font-size: 16px;
+    line-height: 1.6;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
 }
 
 /* 响应式设计 */
@@ -247,20 +366,54 @@ body {
     }
     
     .sound-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
     }
     
-    .sound-card {
-        padding: 15px 5px;
+    .sound-icon {
+        font-size: 36px;
+    }
+    
+    .sound-name {
+        font-size: 14px;
     }
     
     .focus-time {
         font-size: 48px;
     }
     
+    .control-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
     .breathing-circle {
         width: 150px;
         height: 150px;
+    }
+}
+
+/* 防止 iOS 缩放 */
+@media (touch-action: manipulation) {
+    body {
+        touch-action: manipulation;
+    }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-light: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+    }
+    
+    .sound-card {
+        background: var(--background-light);
+    }
+    
+    .duration-btn {
+        background: var(--background-light);
     }
 }
