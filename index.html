@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -7,81 +7,83 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="WhiteNoise Pro">
     
-    <title>WhiteNoise Pro - 白噪音</title>
+    <title>WhiteNoise Pro - Focus & Relax</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <!-- 头部 -->
-        <header class="header">
+        <!-- Header -->
+        <div class="header">
             <h1>WhiteNoise Pro</h1>
-            <p>沉浸式白噪音，专注与放松的完美平衡</p>
-        </header>
-
-        <!-- 标签页 -->
-        <nav class="tabs">
-            <button class="tab-btn active" data-tab="sounds">声音</button>
-            <button class="tab-btn" data-tab="focus">专注</button>
-            <button class="tab-btn" data-tab="breathing">呼吸</button>
-        </nav>
-
-        <!-- 控制栏 -->
-        <div class="controls">
-            <button class="btn btn-primary" id="play-all">
-                <span>▶</span> 全部播放
-            </button>
-            <button class="btn btn-secondary" id="stop-all">
-                <span>⏹</span> 停止
-            </button>
+            <p>Immersive white noise for focus and relaxation</p>
         </div>
 
-        <!-- 音效页面 -->
-        <section id="sounds-tab" class="tab-content active">
-            <div class="sounds-grid" id="sounds-grid">
-                <!-- 由 JavaScript 动态生成 -->
-            </div>
-        </section>
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-button active" data-tab="sounds">Sounds</button>
+            <button class="tab-button" data-tab="focus">Focus</button>
+            <button class="tab-button" data-tab="breathing">Breathing</button>
+        </div>
 
-        <!-- 专注模式页面 -->
-        <section id="focus-tab" class="tab-content" style="display: none;">
-            <div class="focus-section">
-                <div class="timer-label">专注时间</div>
-                <div class="timer-display" id="timer-display">25:00</div>
-                <div class="controls">
-                    <button class="btn btn-primary" id="timer-start">开始</button>
-                    <button class="btn btn-secondary" id="timer-reset">重置</button>
-                </div>
-                <p style="color: var(--text-secondary); margin-top: 24px;">
-                    番茄工作法：25 分钟专注 + 5 分钟休息
-                </p>
+        <!-- Sounds Tab -->
+        <div class="tab-content active" id="sounds-tab">
+            <!-- Playback Controls -->
+            <div class="playback-controls">
+                <button class="control-btn play-btn" id="play-all">▶</button>
+                <button class="control-btn stop-btn" id="stop-all">■</button>
             </div>
-        </section>
+            
+            <!-- Sound Grid -->
+            <div class="sound-grid" id="sounds-grid"></div>
+        </div>
 
-        <!-- 呼吸练习页面 -->
-        <section id="breathing-tab" class="tab-content" style="display: none;">
-            <div class="breathing-section">
-                <div class="timer-label">4-7-8 呼吸法</div>
-                <div class="breathing-circle">
-                    <span class="breathing-phase" id="breathing-phase">准备</span>
-                </div>
-                <p class="breathing-instruction" id="breathing-instruction">
-                    吸气 4 秒 · 屏息 7 秒 · 呼气 8 秒
-                </p>
-                <div class="controls" style="margin-top: 32px;">
-                    <button class="btn btn-primary" id="breathing-start">开始练习</button>
-                    <button class="btn btn-secondary" id="breathing-stop">停止</button>
+        <!-- Focus Mode Tab -->
+        <div class="tab-content" id="focus-tab">
+            <div class="focus-display">
+                <div class="focus-time" id="focus-time">25:00</div>
+                <div class="focus-mode work-mode" id="focus-mode">Work Time</div>
+            </div>
+            
+            <div class="duration-selector">
+                <div class="duration-options">
+                    <button class="duration-btn active" data-duration="25">25 min</button>
+                    <button class="duration-btn" data-duration="30">30 min</button>
+                    <button class="duration-btn" data-duration="45">45 min</button>
+                    <button class="duration-btn" data-duration="60">60 min</button>
                 </div>
             </div>
-        </section>
+            
+            <div class="playback-controls">
+                <button class="control-btn play-btn" id="focus-play">▶</button>
+                <button class="control-btn stop-btn" id="focus-stop">■</button>
+            </div>
+            
+            <div style="text-align: center; color: var(--text-secondary); margin-top: 30px;">
+                Sessions completed: <span id="sessions-completed">0</span>
+            </div>
+        </div>
+
+        <!-- Breathing Tab -->
+        <div class="tab-content" id="breathing-tab">
+            <div class="breathing-circle" id="breathing-circle"></div>
+            <div class="breathing-phase" id="breathing-phase">Ready</div>
+            
+            <div class="playback-controls">
+                <button class="control-btn play-btn" id="breathing-start">Start</button>
+                <button class="control-btn stop-btn" id="breathing-stop">Stop</button>
+            </div>
+            
+            <div class="breathing-instructions">
+                4-7-8 Breathing: Inhale 4s, Hold 7s, Exhale 8s<br>
+                Helps relax and improve sleep quality
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
-    <script src="main.js"></script>
     <script src="timer.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
