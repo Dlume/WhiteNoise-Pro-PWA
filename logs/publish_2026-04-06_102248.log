@@ -1,0 +1,50 @@
+﻿**********************
+Windows PowerShell 脚本开始
+开始时间: 20260406102248
+用户名: DESKTOP-2PCUBS9\PC
+RunAs 用户: DESKTOP-2PCUBS9\PC
+配置名称: 
+计算机: DESKTOP-2PCUBS9 (Microsoft Windows NT 10.0.26200.0)
+主机应用程序: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File .\auto-publish.ps1
+进程 ID: 425720
+PSVersion: 5.1.26100.7920
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.7920
+BuildVersion: 10.0.26100.7920
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+已启动脚本，输出文件为 D:\cowapout\WhiteNoise-Pro\logs\publish_2026-04-06_102248.log
+
+========================================
+  WhiteNoise Pro Auto Publish
+========================================
+
+Start: 2026-04-06 10:22:48
+Version: auto
+Target: github
+
+[1/3] Downloading icons...
+
+Error: 所在位置 D:\cowapout\WhiteNoise-Pro\scripts\download-icons.ps1:48 字符: 12
++ Write-Host "  鉁?鍥炬爣娓呭崟宸茬敓鎴? -ForegroundColor Gray
++            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+字符串缺少终止符: "。
+
+========================================
+  Publish Completed!
+========================================
+
+Duration: 0m 0s
+Status: Failed
+Log: D:\cowapout\WhiteNoise-Pro\logs\publish_2026-04-06_102248.log
+
+Step Results:
+
+Report: D:\cowapout\WhiteNoise_Pro_ExecReport_2026-04-06_102248.md
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20260406102248
+**********************

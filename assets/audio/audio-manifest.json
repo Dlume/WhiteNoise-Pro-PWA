@@ -1,0 +1,50 @@
+﻿{
+    "categories":  {
+                       "nature":  [
+                                      "bamboo-forest.mp3",
+                                      "birds-morning.mp3",
+                                      "crickets-night.mp3",
+                                      "forest-wind.mp3",
+                                      "meadow-summer.mp3",
+                                      "mountain-breeze.mp3",
+                                      "wind-leaves.mp3"
+                                  ],
+                       "water":  [
+                                     "lake-shore.mp3",
+                                     "ocean-waves.mp3",
+                                     "rain-creek.mp3",
+                                     "river-flow.mp3",
+                                     "stream-brook.mp3",
+                                     "water-fountain.mp3",
+                                     "waterfall.mp3"
+                                 ],
+                       "rain":  [
+                                    "heavy-rain.mp3",
+                                    "light-rain.mp3",
+                                    "rain-on-roof.mp3",
+                                    "rain-puddle.mp3",
+                                    "rain-thunder.mp3",
+                                    "rain-window.mp3",
+                                    "tropical-rain.mp3"
+                                ],
+                       "urban":  [
+                                     "cafe-ambient.mp3",
+                                     "city-night.mp3",
+                                     "library-quiet.mp3",
+                                     "office-hum.mp3",
+                                     "restaurant-background.mp3",
+                                     "subway-distant.mp3",
+                                     "train-distant.mp3"
+                                 ],
+                       "white-noise":  [
+                                           "air-purifier.mp3",
+                                           "brown-noise.mp3",
+                                           "fan-sound.mp3",
+                                           "pink-noise.mp3",
+                                           "static-soft.mp3",
+                                           "white-noise-smooth.mp3"
+                                       ]
+                   },
+    "generatedAt":  "2026-04-06 10:25:28",
+    "totalFiles":  34
+}
