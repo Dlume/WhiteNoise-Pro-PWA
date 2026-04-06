@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WhiteNoise Pro">
+    
+    <title>WhiteNoise Pro - Focus & Relax</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>WhiteNoise Pro</h1>
+            <p>Immersive white noise for focus and relaxation</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-button active" data-tab="sounds">Sounds</button>
+            <button class="tab-button" data-tab="focus">Focus</button>
+            <button class="tab-button" data-tab="breathing">Breathing</button>
+        </div>
+
+        <!-- Sounds Tab -->
+        <div class="tab-content active" id="sounds-tab">
+            <!-- Playback Controls -->
+            <div class="playback-controls">
+                <button class="control-btn play-btn" id="play-all">▶</button>
+                <button class="control-btn stop-btn" id="stop-all">■</button>
+            </div>
+            
+            <!-- Sound Grid -->
+            <div class="sound-grid" id="sounds-grid"></div>
+        </div>
+
+        <!-- Focus Mode Tab -->
+        <div class="tab-content" id="focus-tab">
+            <div class="focus-display">
+                <div class="focus-time" id="focus-time">25:00</div>
+                <div class="focus-mode work-mode" id="focus-mode">Work Time</div>
+            </div>
+            
+            <div class="duration-selector">
+                <div class="duration-options">
+                    <button class="duration-btn active" data-duration="25">25 min</button>
+                    <button class="duration-btn" data-duration="30">30 min</button>
+                    <button class="duration-btn" data-duration="45">45 min</button>
+                    <button class="duration-btn" data-duration="60">60 min</button>
+                </div>
+            </div>
+            
+            <div class="playback-controls">
+                <button class="control-btn play-btn" id="focus-play">▶</button>
+                <button class="control-btn stop-btn" id="focus-stop">■</button>
+            </div>
+            
+            <div style="text-align: center; color: var(--text-secondary); margin-top: 30px;">
+                Sessions completed: <span id="sessions-completed">0</span>
+            </div>
+        </div>
+
+        <!-- Breathing Tab -->
+        <div class="tab-content" id="breathing-tab">
+            <div class="breathing-circle" id="breathing-circle"></div>
+            <div class="breathing-phase" id="breathing-phase">Ready</div>
+            
+            <div class="playback-controls">
+                <button class="control-btn play-btn" id="breathing-start">Start</button>
+                <button class="control-btn stop-btn" id="breathing-stop">Stop</button>
+            </div>
+            
+            <div class="breathing-instructions">
+                4-7-8 Breathing: Inhale 4s, Hold 7s, Exhale 8s<br>
+                Helps relax and improve sleep quality
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts without defer - execute in order -->
+    <script src="app.js"></script>
+    <script src="timer.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
