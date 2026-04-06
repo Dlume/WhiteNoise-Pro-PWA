@@ -1,0 +1,13 @@
+{
+  "name": "whitenoise-pro",
+  "version": "1.0.0",
+  "description": "WhiteNoise Pro - Focus & Relax",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'Build completed'"
+  },
+  "keywords": ["white-noise", "focus", "relax", "meditation"],
+  "author": "LobsterAI",
+  "license": "MIT"
+}

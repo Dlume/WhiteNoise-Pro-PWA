@@ -1,192 +1,179 @@
-/**
- * WhiteNoise Pro v3.2 - Audio Manager
- * High-quality procedural audio playback
- */
+// WhiteNoise Pro - Main Application Logic
 
-class PWAAudioManager {
+class WhiteNoiseApp {
     constructor() {
+        this.sounds = [];
+        this.activeSounds = new Set();
         this.audioContext = null;
-        this.audioElements = {};
-        this.isPlaying = false;
-        this.currentSounds = [];
-        this.volumes = {};
-        this.externalSources = {
-            'rain': 'sounds/rain.wav',
-            'ocean': 'sounds/ocean.wav',
-            'thunder': 'sounds/thunder.wav',
-            'forest': 'sounds/forest.wav',
-            'cafe': 'sounds/cafe.wav',
-            'wind': 'sounds/wind.wav',
-            'fireplace': 'sounds/fireplace.wav'
-        };
-        this.setupMediaSession();
+        this.init();
     }
 
-    /**
-     * Initialize Audio Context
-     */
-    initAudioContext() {
-        if (!this.audioContext) {
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (this.audioContext.state === 'suspended') {
-            this.audioContext.resume();
-        }
+    init() {
+        this.loadSounds();
+        this.renderSounds();
+        this.bindEvents();
+        this.initTabs();
     }
 
-    /**
-     * Create Audio Element
-     */
-    createAudioElement(soundName, url) {
-        const audio = document.createElement('audio');
-        audio.loop = true;
-        audio.preload = 'auto';
-        audio.setAttribute('webkit-playsinline', '');
-        audio.setAttribute('playsinline', '');
-        
-        // Use local WAV files
-        const sourceUrl = this.externalSources[soundName] || url;
-        audio.src = sourceUrl;
-        
-        audio.addEventListener('canplaythrough', () => {
-            console.log(`[OK] ${soundName} loaded`);
-        });
-        
-        audio.addEventListener('error', (e) => {
-            console.error(`[ERROR] ${soundName} load failed:`, e);
-        });
-        
-        document.body.appendChild(audio);
-        this.audioElements[soundName] = audio;
-        this.volumes[soundName] = 0.5;
-        return audio;
+    loadSounds() {
+        this.sounds = [
+            { id: 'rain', name: 'Rain', icon: '🌧️', category: 'rain' },
+            { id: 'heavy-rain', name: 'Heavy Rain', icon: '⛈️', category: 'rain' },
+            { id: 'thunder', name: 'Thunder', icon: '⚡', category: 'rain' },
+            { id: 'ocean', name: 'Ocean', icon: '🌊', category: 'water' },
+            { id: 'river', name: 'River', icon: '🏞️', category: 'water' },
+            { id: 'waterfall', name: 'Waterfall', icon: '💦', category: 'water' },
+            { id: 'forest', name: 'Forest', icon: '🌲', category: 'nature' },
+            { id: 'birds', name: 'Birds', icon: '🐦', category: 'nature' },
+            { id: 'wind', name: 'Wind', icon: '💨', category: 'nature' },
+            { id: 'fire', name: 'Fire', icon: '🔥', category: 'nature' },
+            { id: 'white-noise', name: 'White Noise', icon: '⚪', category: 'white-noise' },
+            { id: 'pink-noise', name: 'Pink Noise', icon: '🌸', category: 'white-noise' },
+            { id: 'brown-noise', name: 'Brown Noise', icon: '🟤', category: 'white-noise' },
+            { id: 'cafe', name: 'Café', icon: '☕', category: 'urban' },
+            { id: 'train', name: 'Train', icon: '🚂', category: 'urban' },
+            { id: 'city', name: 'City', icon: '🌃', category: 'urban' }
+        ];
     }
 
-    /**
-     * Play Sound
-     */
-    playSound(soundName, volume = 0.5) {
-        this.initAudioContext();
-        
-        const audio = this.audioElements[soundName];
-        if (audio) {
-            audio.volume = volume;
-            this.volumes[soundName] = volume;
-            
-            audio.play()
-                .then(() => {
-                    console.log(`[OK] ${soundName} playing`);
-                })
-                .catch((e) => {
-                    console.error(`[ERROR] ${soundName} play failed:`, e.message);
-                });
-            
-            if (!this.currentSounds.includes(soundName)) {
-                this.currentSounds.push(soundName);
+    renderSounds() {
+        const grid = document.getElementById('sounds-grid');
+        if (!grid) return;
+
+        grid.innerHTML = this.sounds.map(sound => `
+            <div class="sound-card" data-sound="${sound.id}">
+                <div class="sound-icon">${sound.icon}</div>
+                <div class="sound-name">${sound.name}</div>
+                <div class="sound-volume">
+                    <input type="range" min="0" max="100" value="50" data-volume="${sound.id}">
+                </div>
+            </div>
+        `).join('');
+    }
+
+    bindEvents() {
+        // Sound cards
+        document.addEventListener('click', (e) => {
+            const card = e.target.closest('.sound-card');
+            if (card) {
+                const soundId = card.dataset.sound;
+                this.toggleSound(soundId, card);
             }
-            this.isPlaying = true;
-            this.updateMediaSession();
-        }
-    }
+        });
 
-    /**
-     * Stop Sound
-     */
-    stopSound(soundName) {
-        const audio = this.audioElements[soundName];
-        if (audio) {
-            audio.pause();
-            audio.currentTime = 0;
-            this.currentSounds = this.currentSounds.filter(name => name !== soundName);
-            if (this.currentSounds.length === 0) {
-                this.isPlaying = false;
+        // Volume controls
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('input[type="range"]')) {
+                const soundId = e.target.dataset.volume;
+                this.adjustVolume(soundId, e.target.value);
             }
-            this.updateMediaSession();
+        });
+
+        // Play/Stop all
+        document.getElementById('play-all')?.addEventListener('click', () => this.playAll());
+        document.getElementById('stop-all')?.addEventListener('click', () => this.stopAll());
+
+        // Focus mode
+        document.getElementById('focus-play')?.addEventListener('click', () => this.startFocus());
+        document.getElementById('focus-stop')?.addEventListener('click', () => this.stopFocus());
+
+        // Duration buttons
+        document.querySelectorAll('.duration-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+            });
+        });
+
+        // Breathing
+        document.getElementById('breathing-start')?.addEventListener('click', () => this.startBreathing());
+        document.getElementById('breathing-stop')?.addEventListener('click', () => this.stopBreathing());
+    }
+
+    initTabs() {
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabId = e.target.dataset.tab;
+                
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                e.target.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+    }
+
+    toggleSound(soundId, card) {
+        if (this.activeSounds.has(soundId)) {
+            this.stopSound(soundId);
+            card.classList.remove('active');
+        } else {
+            this.playSound(soundId);
+            card.classList.add('active');
         }
     }
 
-    /**
-     * Stop All Sounds
-     */
+    playSound(soundId) {
+        console.log('Playing:', soundId);
+        this.activeSounds.add(soundId);
+        // In production: load and play audio file
+    }
+
+    stopSound(soundId) {
+        console.log('Stopping:', soundId);
+        this.activeSounds.delete(soundId);
+        // In production: stop audio
+    }
+
+    adjustVolume(soundId, value) {
+        console.log(`Volume ${soundId}: ${value}`);
+        // In production: adjust audio volume
+    }
+
+    playAll() {
+        document.querySelectorAll('.sound-card').forEach(card => {
+            const soundId = card.dataset.sound;
+            if (!this.activeSounds.has(soundId)) {
+                this.playSound(soundId);
+                card.classList.add('active');
+            }
+        });
+    }
+
     stopAll() {
-        Object.values(this.audioElements).forEach((audio) => {
-            audio.pause();
-            audio.currentTime = 0;
+        this.activeSounds.forEach(soundId => this.stopSound(soundId));
+        document.querySelectorAll('.sound-card').forEach(card => {
+            card.classList.remove('active');
         });
-        this.currentSounds = [];
-        this.isPlaying = false;
-        this.updateMediaSession();
     }
 
-    /**
-     * Set Volume
-     */
-    setVolume(soundName, volume) {
-        const audio = this.audioElements[soundName];
-        if (audio) {
-            audio.volume = Math.max(0, Math.min(1, volume));
-            this.volumes[soundName] = audio.volume;
-        }
+    startFocus() {
+        const duration = parseInt(document.querySelector('.duration-btn.active').dataset.duration);
+        console.log('Starting focus:', duration, 'minutes');
+        // In production: start timer
     }
 
-    /**
-     * Get Volume
-     */
-    getVolume(soundName) {
-        return this.volumes[soundName] || 0.5;
+    stopFocus() {
+        console.log('Stopping focus');
     }
 
-    /**
-     * Update Media Session
-     */
-    updateMediaSession() {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.playbackState = this.isPlaying ? 'playing' : 'paused';
-        }
+    startBreathing() {
+        const circle = document.getElementById('breathing-circle');
+        const phase = document.getElementById('breathing-phase');
+        circle?.classList.add('active');
+        phase.textContent = 'Breathe...';
     }
 
-    /**
-     * Setup Media Session
-     */
-    setupMediaSession() {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: 'WhiteNoise Pro',
-                artist: 'White Noise',
-                album: 'Nature Sounds Collection',
-                artwork: [
-                    { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-                    { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' }
-                ]
-            });
-
-            navigator.mediaSession.setActionHandler('play', () => {
-                this.currentSounds.forEach((sound) => {
-                    this.playSound(sound, this.volumes[sound]);
-                });
-            });
-
-            navigator.mediaSession.setActionHandler('pause', () => {
-                this.stopAll();
-            });
-        }
-    }
-
-    /**
-     * Initialize All Sounds
-     */
-    initializeSounds(soundNames) {
-        soundNames.forEach((name) => {
-            this.createAudioElement(name, `sounds/${name}.wav`);
-        });
-        console.log('[OK] Sounds initialized:', soundNames.length);
+    stopBreathing() {
+        const circle = document.getElementById('breathing-circle');
+        const phase = document.getElementById('breathing-phase');
+        circle?.classList.remove('active');
+        phase.textContent = 'Ready';
     }
 }
 
-// Global instance
-const audioManager = new PWAAudioManager();
-
-// Export
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = PWAAudioManager;
-}
+// Initialize app
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new WhiteNoiseApp();
+});
