@@ -1,49 +1,49 @@
-// WhiteNoise Pro - Main Application Logic
+// WhiteNoise Pro - Main Application (Chinese Version)
+// 中文版主程序
 
 class WhiteNoiseApp {
     constructor() {
-        this.sounds = [];
         this.activeSounds = new Set();
-        this.audioContext = null;
+        this.currentCategory = 'all';
         this.init();
     }
 
     init() {
-        this.loadSounds();
+        // 初始化音频引擎
+        window.audioEngine.init();
+        
+        // 渲染声音列表
         this.renderSounds();
+        
+        // 绑定事件
         this.bindEvents();
+        
+        // 初始化标签页
         this.initTabs();
+        
+        // 初始化定时器
+        if (window.TimerApp) {
+            window.timerApp = new TimerApp();
+        }
+        
+        console.log('✅ WhiteNoise Pro 已初始化');
     }
 
-    loadSounds() {
-        this.sounds = [
-            { id: 'rain', name: 'Rain', icon: '🌧️', category: 'rain' },
-            { id: 'heavy-rain', name: 'Heavy Rain', icon: '⛈️', category: 'rain' },
-            { id: 'thunder', name: 'Thunder', icon: '⚡', category: 'rain' },
-            { id: 'ocean', name: 'Ocean', icon: '🌊', category: 'water' },
-            { id: 'river', name: 'River', icon: '🏞️', category: 'water' },
-            { id: 'waterfall', name: 'Waterfall', icon: '💦', category: 'water' },
-            { id: 'forest', name: 'Forest', icon: '🌲', category: 'nature' },
-            { id: 'birds', name: 'Birds', icon: '🐦', category: 'nature' },
-            { id: 'wind', name: 'Wind', icon: '💨', category: 'nature' },
-            { id: 'fire', name: 'Fire', icon: '🔥', category: 'nature' },
-            { id: 'white-noise', name: 'White Noise', icon: '⚪', category: 'white-noise' },
-            { id: 'pink-noise', name: 'Pink Noise', icon: '🌸', category: 'white-noise' },
-            { id: 'brown-noise', name: 'Brown Noise', icon: '🟤', category: 'white-noise' },
-            { id: 'cafe', name: 'Café', icon: '☕', category: 'urban' },
-            { id: 'train', name: 'Train', icon: '🚂', category: 'urban' },
-            { id: 'city', name: 'City', icon: '🌃', category: 'urban' }
-        ];
-    }
-
+    // 渲染声音卡片
     renderSounds() {
         const grid = document.getElementById('sounds-grid');
         if (!grid) return;
 
-        grid.innerHTML = this.sounds.map(sound => `
+        const sounds = window.SOUND_DATA.sounds;
+        const filtered = this.currentCategory === 'all' 
+            ? sounds 
+            : sounds.filter(s => s.category === this.currentCategory);
+
+        grid.innerHTML = filtered.map(sound => `
             <div class="sound-card" data-sound="${sound.id}">
                 <div class="sound-icon">${sound.icon}</div>
                 <div class="sound-name">${sound.name}</div>
+                <div class="sound-category">${window.SOUND_DATA.categories[sound.category]}</div>
                 <div class="sound-volume">
                     <input type="range" min="0" max="100" value="50" data-volume="${sound.id}">
                 </div>
@@ -51,45 +51,45 @@ class WhiteNoiseApp {
         `).join('');
     }
 
+    // 绑定事件
     bindEvents() {
-        // Sound cards
+        // 声音卡片点击
         document.addEventListener('click', (e) => {
             const card = e.target.closest('.sound-card');
             if (card) {
                 const soundId = card.dataset.sound;
                 this.toggleSound(soundId, card);
             }
-        });
-
-        // Volume controls
-        document.addEventListener('input', (e) => {
-            if (e.target.matches('input[type="range"]')) {
-                const soundId = e.target.dataset.volume;
-                this.adjustVolume(soundId, e.target.value);
+            
+            // 分类过滤
+            const filterBtn = e.target.closest('.filter-btn');
+            if (filterBtn) {
+                this.setCategory(filterBtn.dataset.category);
             }
         });
 
-        // Play/Stop all
+        // 音量控制
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('input[type="range"]')) {
+                const soundId = e.target.dataset.volume;
+                window.audioEngine.setVolume(soundId, e.target.value);
+            }
+        });
+
+        // 播放/停止全部
         document.getElementById('play-all')?.addEventListener('click', () => this.playAll());
         document.getElementById('stop-all')?.addEventListener('click', () => this.stopAll());
 
-        // Focus mode
+        // 专注模式
         document.getElementById('focus-play')?.addEventListener('click', () => this.startFocus());
         document.getElementById('focus-stop')?.addEventListener('click', () => this.stopFocus());
 
-        // Duration buttons
-        document.querySelectorAll('.duration-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-            });
-        });
-
-        // Breathing
+        // 呼吸练习
         document.getElementById('breathing-start')?.addEventListener('click', () => this.startBreathing());
         document.getElementById('breathing-stop')?.addEventListener('click', () => this.stopBreathing());
     }
 
+    // 初始化标签页
     initTabs() {
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -104,76 +104,138 @@ class WhiteNoiseApp {
         });
     }
 
+    // 设置分类
+    setCategory(category) {
+        this.currentCategory = category;
+        
+        // 更新按钮状态
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.category === category);
+        });
+        
+        // 重新渲染
+        this.renderSounds();
+    }
+
+    // 切换声音
     toggleSound(soundId, card) {
         if (this.activeSounds.has(soundId)) {
-            this.stopSound(soundId);
-            card.classList.remove('active');
+            this.stopSound(soundId, card);
         } else {
-            this.playSound(soundId);
-            card.classList.add('active');
+            this.playSound(soundId, card);
         }
     }
 
-    playSound(soundId) {
-        console.log('Playing:', soundId);
-        this.activeSounds.add(soundId);
-        // In production: load and play audio file
+    // 播放声音
+    async playSound(soundId, card) {
+        const soundData = window.SOUND_DATA.sounds.find(s => s.id === soundId);
+        if (!soundData) return;
+
+        // 首次播放需要初始化
+        window.audioEngine.init();
+
+        // 加载音频 (如果还没加载)
+        if (!window.audioEngine.audioElements[soundId]) {
+            try {
+                await window.audioEngine.loadAudio(soundId, soundData.file);
+            } catch (e) {
+                console.error(`Failed to load ${soundId}:`, e);
+                alert(`无法加载声音：${soundData.name}`);
+                return;
+            }
+        }
+
+        // 播放
+        const success = window.audioEngine.play(soundId);
+        if (success) {
+            this.activeSounds.add(soundId);
+            card?.classList.add('active');
+            console.log(`▶️ 正在播放：${soundData.name}`);
+        }
     }
 
-    stopSound(soundId) {
-        console.log('Stopping:', soundId);
+    // 停止声音
+    stopSound(soundId, card) {
+        window.audioEngine.stop(soundId);
         this.activeSounds.delete(soundId);
-        // In production: stop audio
+        card?.classList.remove('active');
+        
+        const soundData = window.SOUND_DATA.sounds.find(s => s.id === soundId);
+        console.log(`⏹️ 已停止：${soundData?.name || soundId}`);
     }
 
-    adjustVolume(soundId, value) {
-        console.log(`Volume ${soundId}: ${value}`);
-        // In production: adjust audio volume
-    }
-
+    // 播放全部
     playAll() {
+        window.audioEngine.init();
         document.querySelectorAll('.sound-card').forEach(card => {
             const soundId = card.dataset.sound;
             if (!this.activeSounds.has(soundId)) {
-                this.playSound(soundId);
-                card.classList.add('active');
+                this.playSound(soundId, card);
             }
         });
     }
 
+    // 停止全部
     stopAll() {
-        this.activeSounds.forEach(soundId => this.stopSound(soundId));
+        window.audioEngine.stopAll();
+        this.activeSounds.clear();
         document.querySelectorAll('.sound-card').forEach(card => {
             card.classList.remove('active');
         });
     }
 
+    // 开始专注
     startFocus() {
         const duration = parseInt(document.querySelector('.duration-btn.active').dataset.duration);
-        console.log('Starting focus:', duration, 'minutes');
-        // In production: start timer
+        if (window.timerApp) {
+            window.timerApp.start(duration);
+            document.getElementById('focus-play').textContent = '⏸ 暂停';
+        }
     }
 
+    // 停止专注
     stopFocus() {
-        console.log('Stopping focus');
+        if (window.timerApp) {
+            window.timerApp.stop();
+            document.getElementById('focus-play').textContent = '▶ 开始专注';
+        }
     }
 
+    // 开始呼吸练习
     startBreathing() {
         const circle = document.getElementById('breathing-circle');
         const phase = document.getElementById('breathing-phase');
         circle?.classList.add('active');
-        phase.textContent = 'Breathe...';
+        phase.textContent = '吸气...';
+        
+        // 更新呼吸阶段提示
+        this.updateBreathingPhase(phase);
     }
 
+    // 停止呼吸练习
     stopBreathing() {
         const circle = document.getElementById('breathing-circle');
         const phase = document.getElementById('breathing-phase');
         circle?.classList.remove('active');
-        phase.textContent = 'Ready';
+        phase.textContent = '准备';
+    }
+
+    // 更新呼吸阶段
+    updateBreathingPhase(phaseElement) {
+        const phases = ['吸气 (4 秒)', '屏息 (7 秒)', '呼气 (8 秒)'];
+        let index = 0;
+        
+        const updatePhase = () => {
+            phaseElement.textContent = phases[index];
+            index = (index + 1) % phases.length;
+        };
+        
+        updatePhase();
+        setInterval(updatePhase, 19000); // 4+7+8 = 19 秒一个循环
     }
 }
 
-// Initialize app
+// 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new WhiteNoiseApp();
 });
